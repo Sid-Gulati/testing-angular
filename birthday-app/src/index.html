@@ -1,13 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>BirthdayApp</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Birthday Celebration</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <app-root></app-root>
+<div class="container">
+  <div class="confetti"></div>
+  <h1>🎉 Happy Birthday! 🎉</h1>
+  <p class="subtitle">Wishing you a day full of magic ✨</p>
+
+  <div class="gallery">
+    <img src="https://picsum.photos/250/180?1">
+    <img src="https://picsum.photos/250/180?2">
+    <img src="https://picsum.photos/250/180?3">
+    <img src="https://picsum.photos/250/180?4">
+  </div>
+
+  <div class="quotes">
+    <div class="quote">🎂 May all your dreams come true.</div>
+    <div class="quote">💖 Keep smiling, keep shining.</div>
+    <div class="quote">🚀 Another year, another adventure!</div>
+  </div>
+
+  <button onclick="toggleMusic()">🎵 Toggle Music</button>
+  <audio id="music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<script>
+function toggleMusic(){
+  const m=document.getElementById('music');
+  if(m.paused) m.play(); else m.pause();
+}
+</script>
 </body>
 </html>
