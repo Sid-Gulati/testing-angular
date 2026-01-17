@@ -1,39 +1,210 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Birthday Celebration</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Birthday</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #00172d 0%, #000000 100%);
+            overflow: hidden; font-family: 'Montserrat', sans-serif;
+            color: white; perspective: 1200px;
+        }
+
+        /* Filling the empty space with moving stars */
+        #star-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        }
+
+        /* The Glowing Moon */
+        .moon {
+            position: absolute; top: 10%; right: 10%;
+            width: 120px; height: 120px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/e/db/Full_Moon_Luc_Viatour.jpg');
+            background-size: cover; border-radius: 50%;
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.3), inset -10px -10px 40px rgba(0,0,0,0.8);
+            z-index: 1; animation: floatMoon 6s infinite ease-in-out;
+        }
+
+        @keyframes floatMoon {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* 3D Cube Container - Pushed slightly up to make room */
+        .scene {
+            width: 220px; height: 220px;
+            margin: 80px auto 0;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+        }
+
+        .cube {
+            width: 100%; height: 100%;
+            position: relative; transform-style: preserve-3d;
+            animation: autoRotate 20s infinite linear;
+        }
+
+        @keyframes autoRotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .cube div {
+            position: absolute; width: 220px; height: 220px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .cube img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); }
+
+        .front  { transform: rotateY(0deg) translateZ(110px); }
+        .back   { transform: rotateY(180deg) translateZ(110px); }
+        .right  { transform: rotateY(90deg) translateZ(110px); }
+        .left   { transform: rotateY(-90deg) translateZ(110px); }
+        .top    { transform: rotateX(90deg) translateZ(110px); }
+        .bottom { transform: rotateX(-90deg) translateZ(110px); }
+
+        /* FIXED POSITIONING: UI Panel moved lower */
+        .ui-panel {
+            position: absolute; 
+            bottom: 20px; /* Reduced gap from bottom */
+            width: 100%;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: 20px 30px; /* Slimmer padding */
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; 
+            max-width: 85%; /* Responsive width */
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2.8rem; /* Scaled down for better fit */
+            color: #D4AF37; margin: 0;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .lyrics { 
+            font-style: italic; 
+            color: #ccc; 
+            margin: 8px 0; 
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: #D4AF37; color: black; border: none;
+            padding: 10px 30px; border-radius: 50px;
+            font-weight: 700; cursor: pointer; transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 30px #D4AF37; }
+
+        .effect { position: absolute; pointer-events: none; }
+    </style>
 </head>
 <body>
-<div class="container">
-  <div class="confetti"></div>
-  <h1> Happy Birthday! </h1>
-  <p class="subtitle">Wishing you a day full of magic </p>
 
-  <div class="gallery">
-    <img src="https://picsum.photos/250/180?1">
-    <img src="https://picsum.photos/250/180?2">
-    <img src="https://picsum.photos/250/180?3">
-    <img src="https://picsum.photos/250/180?4">
-  </div>
+    <canvas id="star-canvas"></canvas>
+    <div class="moon"></div>
+    <div id="youtube-audio"></div>
 
-  <div class="quotes">
-    <div class="quote"> May all your dreams come true.</div>
-    <div class="quote"> Keep smiling, keep shining.</div>
-    <div class="quote"> Another year, another adventure!</div>
-  </div>
+    <div class="scene" id="scene">
+        <div class="cube" id="cube">
+            <div class="front"><img src="https://iili.io/fU7gHcx.png"></div>
+            <div class="back"><img src="https://iili.io/fU7D1us.jpg"></div>
+            <div class="right"><img src="https://iili.io/fU7DEwG.jpg"></div>
+            <div class="left"><img src="https://iili.io/fU7D09n.jpg"></div>
+            <div class="top"><img src="https://iili.io/fU7De9e.jpg"></div>
+            <div class="bottom"><img src="https://iili.io/fU7bHlI.jpg"></div>
+        </div>
+    </div>
 
-  <button onclick="toggleMusic()"> Toggle Music</button>
-  <audio id="music" loop>
-    <source src="https://youtu.be/nNZvaMoiATE?list=RDnNZvaMoiATE" type="audio/mpeg">
-  </audio>
-</div>
+    <div class="ui-panel">
+        <div class="glass-card">
+            <h1>Happy Birthday Meri Meesha...!</h1>
+            <p class="lyrics">"Chaand si mehbooba ho meri esa maine socha tha<br>
+            Haa tum bilkul vaisi ho, Jaisa mne socha thaa."</p>
+            <p class="lyrics">Lots of love. Stay happy... ❤️</p>
 
-<script>
-function toggleMusic(){
-  const m=document.getElementById('music');
-  if(m.paused) m.play(); else m.pause();
-}
-</script>
+            <button class="btn" onclick="igniteCelebration()">Celebrate Your Day ✨</button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        // Starfield Effect to fill the empty space
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+        for(let i=0; i<200; i++) stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*2, speed:Math.random()*0.5});
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "white";
+            stars.forEach(s => {
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+                s.y -= s.speed; if(s.y < 0) s.y = canvas.height;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // YouTube API
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-audio', {
+                height: '0', width: '0',
+                videoId: 'u0pE-lW_Y8c', 
+                playerVars: { 'autoplay': 0, 'controls': 0 },
+            });
+        }
+
+        function igniteCelebration() {
+            if(player) player.playVideo();
+            confetti({ particleCount: 200, spread: 160, origin: { y: 0.8 }, colors: ['#D4AF37', '#ffffff', '#ff0000'] });
+            for(let i=0; i<20; i++) { createFloatingElement('❤️'); createFloatingElement('🌸'); }
+        }
+
+        function createFloatingElement(char) {
+            const el = document.createElement('div');
+            el.className = 'effect';
+            el.innerHTML = char;
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.top = '100vh';
+            el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            document.body.appendChild(el);
+            const duration = Math.random() * 3000 + 4000;
+            el.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(-110vh) rotate(360deg)`, opacity: 0 }], { duration: duration });
+            setTimeout(() => el.remove(), duration);
+        }
+
+        // Drag logic
+        let isDragging = false, startX, startY, cube = document.getElementById('cube');
+        document.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX; startY = e.clientY; cube.style.animation = 'none'; });
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            cube.style.transform = `rotateY(${e.clientX - startX}deg) rotateX(${-(e.clientY - startY)}deg)`;
+        });
+        document.addEventListener('mouseup', () => isDragging = false);
+    </script>
 </body>
 </html>
