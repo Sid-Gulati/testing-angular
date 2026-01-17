@@ -1,79 +1,110 @@
+ body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #00172d 0%, #000000 100%);
+            overflow: hidden; font-family: 'Montserrat', sans-serif;
+            color: white; perspective: 1200px;
+        }
 
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:radial-gradient(circle,#ffecd2,#fcb69f);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-.container{
-background:white;
-padding:40px;
-border-radius:25px;
-box-shadow:0 15px 40px rgba(0,0,0,0.25);
-text-align:center;
-max-width:900px;
-width:90%;
-animation:fadeIn 1.5s ease;
-}
-h1{font-size:3rem;color:#ff5e78;}
-.subtitle{font-size:1.3rem;color:#555;margin-bottom:20px;}
+        /* Filling the empty space with moving stars */
+        #star-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        }
 
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-margin:20px 0;
-}
-.gallery img{
-width:100%;
-border-radius:15px;
-transition:transform .4s,box-shadow .4s;
-}
-.gallery img:hover{
-transform:scale(1.08) rotate(1deg);
-box-shadow:0 10px 20px rgba(0,0,0,0.3);
-}
+        /* The Glowing Moon */
+        .moon {
+            position: absolute; top: 10%; right: 10%;
+            width: 120px; height: 120px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/e/db/Full_Moon_Luc_Viatour.jpg');
+            background-size: cover; border-radius: 50%;
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.3), inset -10px -10px 40px rgba(0,0,0,0.8);
+            z-index: 1; animation: floatMoon 6s infinite ease-in-out;
+        }
 
-.quotes{
-display:flex;
-justify-content:center;
-gap:15px;
-flex-wrap:wrap;
-margin:20px 0;
-}
-.quote{
-background:linear-gradient(135deg,#f6d365,#fda085);
-padding:15px 20px;
-border-radius:20px;
-font-weight:600;
-color:#333;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-animation:float 3s ease-in-out infinite;
-}
+        @keyframes floatMoon {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
 
-button{
-background:linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-border:none;
-padding:14px 28px;
-border-radius:30px;
-font-size:1rem;
-cursor:pointer;
-transition:transform .3s,box-shadow .3s;
-}
-button:hover{
-transform:translateY(-3px);
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
-}
+        /* 3D Cube Container - Pushed slightly up to make room */
+        .scene {
+            width: 220px; height: 220px;
+            margin: 80px auto 0;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+        }
 
-@keyframes float{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-10px);}
-}
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(30px);}
-to{opacity:1;transform:translateY(0);}
-}
+        .cube {
+            width: 100%; height: 100%;
+            position: relative; transform-style: preserve-3d;
+            animation: autoRotate 20s infinite linear;
+        }
+
+        @keyframes autoRotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .cube div {
+            position: absolute; width: 220px; height: 220px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .cube img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); }
+
+        .front  { transform: rotateY(0deg) translateZ(110px); }
+        .back   { transform: rotateY(180deg) translateZ(110px); }
+        .right  { transform: rotateY(90deg) translateZ(110px); }
+        .left   { transform: rotateY(-90deg) translateZ(110px); }
+        .top    { transform: rotateX(90deg) translateZ(110px); }
+        .bottom { transform: rotateX(-90deg) translateZ(110px); }
+
+        /* FIXED POSITIONING: UI Panel moved lower */
+        .ui-panel {
+            position: absolute; 
+            bottom: 20px; /* Reduced gap from bottom */
+            width: 100%;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: 20px 30px; /* Slimmer padding */
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; 
+            max-width: 85%; /* Responsive width */
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2.8rem; /* Scaled down for better fit */
+            color: #D4AF37; margin: 0;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .lyrics { 
+            font-style: italic; 
+            color: #ccc; 
+            margin: 8px 0; 
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: #D4AF37; color: black; border: none;
+            padding: 10px 30px; border-radius: 50px;
+            font-weight: 700; cursor: pointer; transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 30px #D4AF37; }
+
+        .effect { position: absolute; pointer-events: none; }
