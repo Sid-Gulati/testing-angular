@@ -3,96 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celestial Birthday</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
-   </head>
+    <title>I'm Truly Sorry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+    
+    </style>
+</head>
 <body>
 
-    <canvas id="star-canvas"></canvas>
-    <div class="moon"></div>
-    <div id="youtube-audio"></div>
+    <canvas id="rain-canvas"></canvas>
 
-    <div class="scene" id="scene">
-        <div class="cube" id="cube">
-            <div class="front"><img src="https://iili.io/fU7gHcx.png"></div>
-            <div class="back"><img src="https://iili.io/fU7D1us.jpg"></div>
-            <div class="right"><img src="https://iili.io/fU7DEwG.jpg"></div>
-            <div class="left"><img src="https://iili.io/fU7D09n.jpg"></div>
-            <div class="top"><img src="https://iili.io/fU7De9e.jpg"></div>
-            <div class="bottom"><img src="https://iili.io/fU7bHlI.jpg"></div>
-        </div>
+    <div class="sorry-card">
+        <div class="icon-box float" id="emoji">😔</div>
+        <h1>I'm So Sorry</h1>
+        <p id="message">
+            I know I messed up, and I hate that I hurt you. <br>
+            Please give me a chance to make it right. <br>
+            You mean the world to me.
+        </p>
+        <button class="btn-sorry" onclick="mendHeart()">Please Forgive Me?</button>
     </div>
 
-    <div class="ui-panel">
-        <div class="glass-card">
-            <h1>Happy Birthday Meri Meesha...!</h1>
-            <p class="lyrics">"Chaand si mehbooba ho meri esa maine socha tha<br>
-            Haa tum bilkul vaisi ho, Jaisa mne socha thaa."</p>
-            <p class="lyrics">Lots of love. Stay happy... ❤️</p>
-
-            <button class="btn" onclick="igniteCelebration()">Celebrate Your Day ✨</button>
-        </div>
-    </div>
-
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
     <script>
-        // Starfield Effect to fill the empty space
-        const canvas = document.getElementById('star-canvas');
+        // Rain Effect Logic
+        const canvas = document.getElementById('rain-canvas');
         const ctx = canvas.getContext('2d');
-        let stars = [];
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.onresize = resize; resize();
-        for(let i=0; i<200; i++) stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*2, speed:Math.random()*0.5});
-        function drawStars() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "white";
-            stars.forEach(s => {
-                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-                s.y -= s.speed; if(s.y < 0) s.y = canvas.height;
+        let drops = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createDrops() {
+            for(let i = 0; i < 100; i++) {
+                drops.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    length: Math.random() * 20 + 10,
+                    speed: Math.random() * 5 + 2
+                });
+            }
+        }
+
+        function drawRain() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#4a4a4a';
+            ctx.lineWidth = 1;
+            drops.forEach(d => {
+                ctx.beginPath();
+                ctx.moveTo(d.x, d.y);
+                ctx.lineTo(d.x, d.y + d.length);
+                ctx.stroke();
+                d.y += d.speed;
+                if(d.y > canvas.height) d.y = -20;
             });
-            requestAnimationFrame(drawStars);
+            requestAnimationFrame(drawRain);
         }
-        drawStars();
 
-        // YouTube API
-        let player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-audio', {
-                height: '0', width: '0',
-                videoId: 'u0pE-lW_Y8c', 
-                playerVars: { 'autoplay': 0, 'controls': 0 },
+        window.addEventListener('resize', resize);
+        resize();
+        createDrops();
+        drawRain();
+
+        // Interaction Logic
+        function mendHeart() {
+            const emoji = document.getElementById('emoji');
+            const msg = document.getElementById('message');
+            
+            emoji.innerHTML = "❤️";
+            emoji.style.transform = "scale(1.5)";
+            msg.innerHTML = "Thank you for listening. <br> I promise to be better from now on.";
+            
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#e63946', '#f1faee', '#a8dadc']
             });
-        }
 
-        function igniteCelebration() {
-            if(player) player.playVideo();
-            confetti({ particleCount: 200, spread: 160, origin: { y: 0.8 }, colors: ['#D4AF37', '#ffffff', '#ff0000'] });
-            for(let i=0; i<20; i++) { createFloatingElement('❤️'); createFloatingElement('🌸'); }
+            document.querySelector('.btn-sorry').style.display = 'none';
         }
-
-        function createFloatingElement(char) {
-            const el = document.createElement('div');
-            el.className = 'effect';
-            el.innerHTML = char;
-            el.style.left = Math.random() * 100 + 'vw';
-            el.style.top = '100vh';
-            el.style.fontSize = (Math.random() * 20 + 20) + 'px';
-            document.body.appendChild(el);
-            const duration = Math.random() * 3000 + 4000;
-            el.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(-110vh) rotate(360deg)`, opacity: 0 }], { duration: duration });
-            setTimeout(() => el.remove(), duration);
-        }
-
-        // Drag logic
-        let isDragging = false, startX, startY, cube = document.getElementById('cube');
-        document.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX; startY = e.clientY; cube.style.animation = 'none'; });
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            cube.style.transform = `rotateY(${e.clientX - startX}deg) rotateX(${-(e.clientY - startY)}deg)`;
-        });
-        document.addEventListener('mouseup', () => isDragging = false);
     </script>
 </body>
 </html>
